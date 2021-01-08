@@ -1,6 +1,6 @@
 /**
  * @license
- * format-to-json v1.0.4
+ * format-to-json v1.0.5
  * GitHub Repository <https://github.com/CN-Tower/format-to-json>
  * Released under MIT license <https://github.com/CN-Tower/format-to-json/blob/master/LICENSE>
  */
@@ -65,6 +65,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
        * { fmtType } Possibal value: 'info' | 'success' | 'warning' | 'danger';
        */
       var fmtSource = source,
+          fmtSource_ = source,
           curLevel = 0,
           curIndex = 1,
           exceptType = '',
@@ -124,14 +125,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             doSpecialFormat();
           }
         } catch (err) {
-          // console.log(err);
           if (OPTIONS.isUnscape) {
             fmtSource = fmtSource.replace(/\\"/mg, '"').replace(/\\\\/mg, '\\');
           }
           doSpecialFormat();
         }
       } catch (err) {
-        // console.log(err);
         isFmtError = true;
       } finally {
         setFmtStatus();
@@ -526,11 +525,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           isSrcValid = false;
           errExpect = brc;
           errIndex = curIndex;
-          console.log(fmtResult);
-          console.log(fmtSource);
-          var rstTrailing = fmtResult.substr(-20).replace(/^(\s|\n|\r\n)*/, '').replace(/(\n|\r\n)/mg, '\\n');
-          var srcLeading = fmtSource.substr(0, 10).replace(/(\s|\n|\r\n)*$/, '').replace(/(\n|\r\n)/mg, '\\n');
-          errNear = '...' + rstTrailing + '>>>>>>' + srcLeading;
+          var fmtedSrc = fmtSource_.replace(fmtSource, '');
+          var fmtedTrailing = fmtedSrc.substr(-20).replace(/^(\s|\n|\r\n)*/, '').replace(/(\n|\r\n)/mg, '\\n');
+          var fmtedPrefix = fmtedSrc.length > fmtedTrailing.length ? '...' : '';
+          var restLeading = fmtSource.substr(0, 15).replace(/(\s|\n|\r\n)*$/, '').replace(/(\n|\r\n)/mg, '\\n');
+          var restSuffix = fmtSource.length > restLeading.length ? '...' : '';
+          errNear = fmtedPrefix + fmtedTrailing + '>>>>>>' + (restLeading + restSuffix);
         }
         fmtSign = sign;
         message = MESSAGES_MAP[sign](curIndex, brc);

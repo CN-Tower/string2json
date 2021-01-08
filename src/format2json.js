@@ -52,6 +52,7 @@
        * { fmtType } Possibal value: 'info' | 'success' | 'warning' | 'danger';
        */
       let fmtSource = source
+        , fmtSource_ = source
         , curLevel = 0
         , curIndex = 1
         , exceptType = ''
@@ -111,14 +112,12 @@
             doSpecialFormat();
           }
         } catch (err) {
-          // console.log(err);
           if (OPTIONS.isUnscape) {
             fmtSource = fmtSource.replace(/\\"/mg, '"').replace(/\\\\/mg, '\\');
           }
           doSpecialFormat();
         }
       } catch (err) {
-        // console.log(err);
         isFmtError = true;
       } finally {
         setFmtStatus();
@@ -496,11 +495,12 @@
           isSrcValid = false;
           errExpect = brc;
           errIndex = curIndex;
-          console.log(fmtResult);
-          console.log(fmtSource);
-          const rstTrailing = fmtResult.substr(-20).replace(/^(\s|\n|\r\n)*/, '').replace(/(\n|\r\n)/mg, '\\n');
-          const srcLeading = fmtSource.substr(0, 10).replace(/(\s|\n|\r\n)*$/, '').replace(/(\n|\r\n)/mg, '\\n');
-          errNear = `...${rstTrailing}>>>>>>${srcLeading}`;
+          const fmtedSrc = fmtSource_.replace(fmtSource, '');
+          const fmtedTrailing = fmtedSrc.substr(-20).replace(/^(\s|\n|\r\n)*/, '').replace(/(\n|\r\n)/mg, '\\n');
+          const fmtedPrefix = fmtedSrc.length > fmtedTrailing.length ? '...' : '';
+          const restLeading = fmtSource.substr(0, 15).replace(/(\s|\n|\r\n)*$/, '').replace(/(\n|\r\n)/mg, '\\n');
+          const restSuffix = fmtSource.length > restLeading.length ? '...' : '';
+          errNear = `${fmtedPrefix + fmtedTrailing}>>>>>>${restLeading + restSuffix}`;
         }
         fmtSign = sign;
         message = MESSAGES_MAP[sign](curIndex, brc);
